@@ -1,6 +1,9 @@
-from django.shortcuts import render
 import os
-import json
+# import json
+
+from django.shortcuts import render
+
+from mainapp.models import ProductCategory, Products
 
 # Обращение к папке mainapp
 dir_ = os.path.dirname(__file__)
@@ -13,21 +16,18 @@ def index(request):
 
 
 def products(request):
-    file_path = os.path.join(dir_, 'fixtures/data.json')
+    context = {
+        'title': 'GeekShop - Каталог',
+        'products': Products.objects.all(),
+        'categories': ProductCategory.objects.all(),
+    }
 
-    context = dict()
-    context.update(json.load(open(file_path, encoding='utf-8')))
+
+    # file_path = os.path.join(dir_, 'fixtures/data.json')
+    # context = dict()
+    # context.update(json.load(open(file_path, encoding='utf-8')))
 
     # with open('mainapp/fixtures/data.json', 'r') as f:
     #     context = json.load(f)
 
     return render(request, 'mainapp/products.html', context)
-
-
-def test_context(request):
-    context = {
-        'title': 'geekshop',
-        'header': 'Добро пожаловать на сайт!',
-        'username': 'Иван Иванов'
-    }
-    return render(request, 'mainapp/test-context.html', context)
