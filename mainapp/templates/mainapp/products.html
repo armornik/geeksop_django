@@ -67,7 +67,7 @@
                             </a>
                             <div class="card-body">
                                 <h4 class="card-title">
-                                    <a href="#">{{ product.name }}</a>
+                                    <a href="{% url 'product' product.id %}">{{ product.name }}</a>
                                 </h4>
                                 <h5>{{ product.price }}</h5>
                                 <p class="card-text">
@@ -91,7 +91,7 @@
                             </a>
                             <div class="card-body">
                                 <h4 class="card-title">
-                                    <a href="#">{{ product.name }}</a>
+                                    <a href="{% url 'product' product.id %}">{{ product.name }}</a>
                                 </h4>
                                 <h5>{{ product.price }}</h5>
                                 <p class="card-text">{{ product.short_description }}</p>

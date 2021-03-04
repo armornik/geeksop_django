@@ -4,6 +4,10 @@ from django.db import models
 
 # createsuperuser
 
+# manage.py dumpdata mainapp.ProductCategory > categories.json - создать json  с данными
+# manage.py dumpdata mainapp.Products > goods.json - создать json  с данными
+# manage.py loaddata mainapp/fixtures/goods.json - восстановить данные
+
 # manage.py shell - запустить консоль
 # ProductCategory.objects.create(name='Новинки') - создать объект
 # ProductCategory.objects.get(name='Новинки') - получить объект
