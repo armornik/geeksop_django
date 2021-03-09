@@ -15,13 +15,12 @@ def index(request):
     return render(request, 'mainapp/index.html', context)
 
 
-def products(request):
+def products(request, id=None):
     context = {
         'title': 'GeekShop - Каталог',
         'products': Products.objects.all(),
         'categories': ProductCategory.objects.all(),
     }
-
 
     # file_path = os.path.join(dir_, 'fixtures/data.json')
     # context = dict()
