@@ -50,7 +50,8 @@ def logout(request):
 def profile(request):
     if request.method == 'POST':
         # instance - с конкретным пользователем
-        form = UserProfileForm(data=request.POST, instance=request.user)
+        # files=request.FILES - работать с файлами
+        form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user)
         if form.is_valid:
             form.save()
             return HttpResponseRedirect(reverse('auth:profile'))
@@ -58,6 +59,6 @@ def profile(request):
         form = UserProfileForm(instance=request.user)
     context = {
         'form': form,
-        'baskets': Basket.objects.all()
+        'baskets': Basket.objects.filter(user=request.user)
     }
     return render(request, 'authapp/profile.html', context)
