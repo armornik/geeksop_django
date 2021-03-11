@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 
 from authapp.models import User
 
@@ -34,3 +35,26 @@ class UserRegisterForm(UserCreationForm):
 
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control py-4'
+
+
+class UserProfileForm(UserChangeForm):
+    # изменить встроенные поля - widget=forms.FileInput() (убрать кнопки изменить, очистить)
+    avatar = forms.ImageField(widget=forms.FileInput())
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'avatar')
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        # readonly - поле доступно только для чтения
+        self.fields['username'].widget.attrs['readonly'] = True
+        self.fields['email'].widget.attrs['readonly'] = True
+
+        for field_name, field in self.fields.items():
+            if field_name != 'avatar':
+                field.widget.attrs['class'] = 'form-control py-4'
+            else:
+                field.widget.attrs['class'] = 'custom-file-input'
+        # вместо else можно:
+        # self.fields['avatar'].widget.attrs['class'] = 'custom-file-input'
+        # profile.html add in form enctype="multipart/form-data" - чтобы отправлять файлы
