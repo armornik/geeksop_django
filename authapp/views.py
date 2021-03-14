@@ -51,16 +51,17 @@ def logout(request):
 # @login_required(login_url='/auth/login/') - если не использовать в settings LOGIN_URL
 @login_required
 def profile(request):
+    user = request.user
     if request.method == 'POST':
         # instance - с конкретным пользователем
         # files=request.FILES - работать с файлами
-        form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user)
+        form = UserProfileForm(data=request.POST, files=request.FILES, instance=user)
         if form.is_valid:
             form.save()
             return HttpResponseRedirect(reverse('auth:profile'))
     else:
-        form = UserProfileForm(instance=request.user)
-    baskets = Basket.objects.filter(user=request.user)
+        form = UserProfileForm(instance=user)
+    baskets = Basket.objects.filter(user=user)
 
     # variant_1
     # total_quantity = 0
