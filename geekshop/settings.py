@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'mainapp',
     'authapp',
     'basketapp',
+    'adminapp',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Используем свою таблицу авторизации
 AUTH_USER_MODEL = 'authapp.User'
+
+# для перенаправление при авторизации - автоматически подставляется в @login_required
+LOGIN_URL = '/auth/login/'

@@ -39,7 +39,8 @@ class UserRegisterForm(UserCreationForm):
 
 class UserProfileForm(UserChangeForm):
     # изменить встроенные поля - widget=forms.FileInput() (убрать кнопки изменить, очистить)
-    avatar = forms.ImageField(widget=forms.FileInput())
+    # required - не обязательно загружать изображение
+    avatar = forms.ImageField(widget=forms.FileInput(), required=False)
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'avatar')
