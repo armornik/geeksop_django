@@ -9,7 +9,7 @@ from authapp.models import User
 
 
 # Create your models here.
-class Basket (models.Model):
+class Basket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
