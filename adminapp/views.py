@@ -26,10 +26,10 @@ class UserListView(ListView):
     model = User
     template_name = 'adminapp/admin-users-read.html'
 
-    # # Метод который вызывается при переходе в шаблон (для вызова декоратора)
-    # @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
-    # def dispatch(self, request, *args, **kwargs):
-    #     super(UserListView, self).dispatch(request, *args, **kwargs)
+    # Метод который вызывается при переходе в шаблон (для вызова декоратора)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserListView, self).dispatch(request, *args, **kwargs)
 
 
 # # CREATE
@@ -56,9 +56,9 @@ class UserCreateView(CreateView):
     # reverse_lazy - для получения урла - для класса
     success_url = reverse_lazy('admin_staff:admin_users')
 
-    # @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
-    # def dispatch(self, request, *args, **kwargs):
-    #     super(UserListView, self).dispatch(request, *args, **kwargs)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserListView, self).dispatch(request, *args, **kwargs)
 
 # UPDATE
 # @user_passes_test(lambda u: u.is_superuser, login_url='/')
@@ -95,9 +95,9 @@ class UserUpdateView(UpdateView):
         context['title'] = 'GeekShop - Редактирование пользователя'
         return context
 
-    # @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
-    # def dispatch(self, request, *args, **kwargs):
-    #     super(UserListView, self).dispatch(request, *args, **kwargs)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserListView, self).dispatch(request, *args, **kwargs)
 
 
 # # DELETE
@@ -125,9 +125,9 @@ class UserDeleteView(DeleteView):
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
-    # @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
-    # def dispatch(self, request, *args, **kwargs):
-    #     super(UserListView, self).dispatch(request, *args, **kwargs)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserListView, self).dispatch(request, *args, **kwargs)
 
 
 class UserReestablishView(DeleteView):
@@ -141,8 +141,6 @@ class UserReestablishView(DeleteView):
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
-    # @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
-    # def dispatch(self, request, *args, **kwargs):
-    #     super(UserListView, self).dispatch(request, *args, **kwargs)
-
-
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserListView, self).dispatch(request, *args, **kwargs)
