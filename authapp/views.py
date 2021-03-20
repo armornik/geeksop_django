@@ -73,9 +73,12 @@ class ProfileUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         # получаем контекст у родителя
         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        user = self.request.user
         # вносим необходимые изменения
-        context['baskets'] = Basket.objects.filter(pk=self.kwargs.get('pk'))
-        context['form'] = UserProfileForm(instance=self.kwargs.get('pk'))
+        # context['baskets'] = Basket.objects.filter(pk=self.kwargs.get('pk'))
+        context['baskets'] = Basket.objects.filter(user=user)
+        context['form'] = UserProfileForm(instance=user)
+        # context['form'] = UserProfileForm(instance=self.kwargs.get('pk'))
         return context
 
     # def get_object(self):
