@@ -1,13 +1,15 @@
+# from django.http import Http404
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
+from django.contrib.auth.views import LoginView, LogoutView
 # from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+# from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import get_object_or_404
+# from django.shortcuts import get_object_or_404
 
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
 from basketapp.models import Basket
@@ -15,23 +17,31 @@ from authapp.models import User
 
 
 # Create your views here.
-def login(request):
-    if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            user = auth.authenticate(username=username, password=password)
-            if user and user.is_active:
-                auth.login(request, user)
-                # reverse - определяет путь к странице
-                return HttpResponseRedirect(reverse('index'))
-        else:
-            print(form.errors)
-    else:
-        form = UserLoginForm()
-    context = {'form': form}
-    return render(request, 'authapp/login.html', context)
+# login with CBV
+class UserLoginView(LoginView):
+    template_name = 'authapp/login.html'
+    model = User
+    form_class = UserLoginForm
+    fields = ['username', 'password']
+
+
+# def login(request):
+#     if request.method == 'POST':
+#         form = UserLoginForm(data=request.POST)
+#         if form.is_valid():
+#             username = request.POST['username']
+#             password = request.POST['password']
+#             user = auth.authenticate(username=username, password=password)
+#             if user and user.is_active:
+#                 auth.login(request, user)
+#                 # reverse - определяет путь к странице
+#                 return HttpResponseRedirect(reverse('index'))
+#         else:
+#             print(form.errors)
+#     else:
+#         form = UserLoginForm()
+#     context = {'form': form}
+#     return render(request, 'authapp/login.html', context)
 
 
 class RegisterCreateView(SuccessMessageMixin, CreateView):
@@ -59,30 +69,29 @@ class RegisterCreateView(SuccessMessageMixin, CreateView):
 #     return render(request, 'authapp/register.html', context)
 
 
-def logout(request):
-    auth.logout(request)
-    return HttpResponseRedirect(reverse('index'))
+class UserLogoutView(LogoutView):
+    next_page = 'index'
+
+
+# def logout(request):
+#     auth.logout(request)
+#     return HttpResponseRedirect(reverse('index'))
 
 
 class ProfileUpdateView(UpdateView):
-    model = Basket
+    model = User
     template_name = 'authapp/profile.html'
     form_class = UserProfileForm
-    success_url = reverse_lazy('auth:profile')
+
+    def get_success_url(self):
+        return reverse_lazy('auth:profile', kwargs={'pk': self.object.id})  # object because model = User
 
     def get_context_data(self, **kwargs):
         # получаем контекст у родителя
         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
-        user = self.request.user
         # вносим необходимые изменения
-        # context['baskets'] = Basket.objects.filter(pk=self.kwargs.get('pk'))
-        context['baskets'] = Basket.objects.filter(user=user)
-        context['form'] = UserProfileForm(instance=user)
-        # context['form'] = UserProfileForm(instance=self.kwargs.get('pk'))
+        context['baskets'] = Basket.objects.filter(user=self.object.id)
         return context
-
-    # def get_object(self):
-    #     return get_object_or_404(User, pk=self.request.user.id)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

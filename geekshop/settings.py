@@ -134,4 +134,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTH_USER_MODEL = 'authapp.User'
 
 # для перенаправление при авторизации - автоматически подставляется в @login_required
-LOGIN_URL = '/auth/login/'
+LOGIN_URL = '/auth/login/<int:pk>/'
+LOGIN_REDIRECT_URL = 'index'
