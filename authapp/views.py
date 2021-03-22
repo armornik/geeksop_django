@@ -1,5 +1,7 @@
+# from django.http import Http404
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
+from django.contrib.auth.views import LoginView, LogoutView
 # from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -15,23 +17,31 @@ from authapp.models import User
 
 
 # Create your views here.
-def login(request):
-    if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            user = auth.authenticate(username=username, password=password)
-            if user and user.is_active:
-                auth.login(request, user)
-                # reverse - определяет путь к странице
-                return HttpResponseRedirect(reverse('index'))
-        else:
-            print(form.errors)
-    else:
-        form = UserLoginForm()
-    context = {'form': form}
-    return render(request, 'authapp/login.html', context)
+# login with CBV
+class UserLoginView(LoginView):
+    template_name = 'authapp/login.html'
+    model = User
+    form_class = UserLoginForm
+    fields = ['username', 'password']
+
+
+# def login(request):
+#     if request.method == 'POST':
+#         form = UserLoginForm(data=request.POST)
+#         if form.is_valid():
+#             username = request.POST['username']
+#             password = request.POST['password']
+#             user = auth.authenticate(username=username, password=password)
+#             if user and user.is_active:
+#                 auth.login(request, user)
+#                 # reverse - определяет путь к странице
+#                 return HttpResponseRedirect(reverse('index'))
+#         else:
+#             print(form.errors)
+#     else:
+#         form = UserLoginForm()
+#     context = {'form': form}
+#     return render(request, 'authapp/login.html', context)
 
 
 class RegisterCreateView(SuccessMessageMixin, CreateView):
@@ -59,9 +69,13 @@ class RegisterCreateView(SuccessMessageMixin, CreateView):
 #     return render(request, 'authapp/register.html', context)
 
 
-def logout(request):
-    auth.logout(request)
-    return HttpResponseRedirect(reverse('index'))
+class UserLogoutView(LogoutView):
+    next_page = 'index'
+
+
+# def logout(request):
+#     auth.logout(request)
+#     return HttpResponseRedirect(reverse('index'))
 
 
 class ProfileUpdateView(UpdateView):
