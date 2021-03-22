@@ -3,9 +3,9 @@ from django.contrib import auth
 # from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-# from django.utils.decorators import method_decorator
+from django.utils.decorators import method_decorator
 # from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 # from django.shortcuts import get_object_or_404
 
@@ -64,72 +64,67 @@ def logout(request):
     return HttpResponseRedirect(reverse('index'))
 
 
-# class ProfileUpdateView(UpdateView):
-#     model = Basket
-#     template_name = 'authapp/profile.html'
-#     form_class = UserProfileForm
-#     success_url = reverse_lazy('auth:profile')
+class ProfileUpdateView(UpdateView):
+    model = User
+    template_name = 'authapp/profile.html'
+    form_class = UserProfileForm
+
+    def get_success_url(self):
+        return reverse_lazy('auth:profile', kwargs={'pk': self.object.id})  # object because model = User
+
+    def get_context_data(self, **kwargs):
+        # получаем контекст у родителя
+        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        # вносим необходимые изменения
+        context['baskets'] = Basket.objects.filter(user=self.object.id)
+        return context
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ProfileUpdateView, self).dispatch(request, *args, **kwargs)
+
+
+# # @login_required(login_url='/auth/login/') - если не использовать в settings LOGIN_URL
+# @login_required
+# def profile(request):
+#     user = request.user
+#     if request.method == 'POST':
+#         # instance - с конкретным пользователем
+#         # files=request.FILES - работать с файлами
+#         form = UserProfileForm(data=request.POST, files=request.FILES, instance=user)
+#         if form.is_valid:
+#             form.save()
+#             return HttpResponseRedirect(reverse('auth:profile'))
+#     else:
+#         form = UserProfileForm(instance=user)
+#     baskets = Basket.objects.filter(user=user)
 #
-#     def get_context_data(self, **kwargs):
-#         # получаем контекст у родителя
-#         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
-#         user = self.request.user
-#         # вносим необходимые изменения
-#         # context['baskets'] = Basket.objects.filter(pk=self.kwargs.get('pk'))
-#         context['baskets'] = Basket.objects.filter(user=user)
-#         context['form'] = UserProfileForm(instance=user)
-#         # context['form'] = UserProfileForm(instance=self.kwargs.get('pk'))
-#         return context
+#     # variant_1
+#     # total_quantity = 0
+#     # total_sum = 0
+#     # for basket in baskets:
+#     #     total_quantity += basket.quantity
+#     #     total_sum += basket.sum()
+#     # context = {
+#     #     'form': form,
+#     #     'baskets': baskets,
+#     #     'total_quantity': total_quantity,
+#     #     'total_sum': total_sum
+#     # }
 #
-#     # def get_object(self):
-#     #     return get_object_or_404(User, pk=self.request.user.id)
+#     # variant_2
+#     # total_quantity = sum(basket.quantity for basket in baskets)
+#     # total_sum = sum(basket.sum() for basket in baskets)
+#     # context = {
+#     #     'form': form,
+#     #     'baskets': baskets,
+#     #     'total_quantity': total_quantity,
+#     #     'total_sum': total_sum
+#     # }
 #
-#     @method_decorator(login_required)
-#     def dispatch(self, request, *args, **kwargs):
-#         return super(ProfileUpdateView, self).dispatch(request, *args, **kwargs)
-
-
-# @login_required(login_url='/auth/login/') - если не использовать в settings LOGIN_URL
-@login_required
-def profile(request):
-    user = request.user
-    if request.method == 'POST':
-        # instance - с конкретным пользователем
-        # files=request.FILES - работать с файлами
-        form = UserProfileForm(data=request.POST, files=request.FILES, instance=user)
-        if form.is_valid:
-            form.save()
-            return HttpResponseRedirect(reverse('auth:profile'))
-    else:
-        form = UserProfileForm(instance=user)
-    baskets = Basket.objects.filter(user=user)
-
-    # variant_1
-    # total_quantity = 0
-    # total_sum = 0
-    # for basket in baskets:
-    #     total_quantity += basket.quantity
-    #     total_sum += basket.sum()
-    # context = {
-    #     'form': form,
-    #     'baskets': baskets,
-    #     'total_quantity': total_quantity,
-    #     'total_sum': total_sum
-    # }
-
-    # variant_2
-    # total_quantity = sum(basket.quantity for basket in baskets)
-    # total_sum = sum(basket.sum() for basket in baskets)
-    # context = {
-    #     'form': form,
-    #     'baskets': baskets,
-    #     'total_quantity': total_quantity,
-    #     'total_sum': total_sum
-    # }
-
-    context = {
-        'form': form,
-        'baskets': baskets,
-    }
-
-    return render(request, 'authapp/profile.html', context)
+#     context = {
+#         'form': form,
+#         'baskets': baskets,
+#     }
+#
+#     return render(request, 'authapp/profile.html', context)
