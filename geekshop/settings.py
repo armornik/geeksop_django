@@ -10,7 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import environ
 import os
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!*te@d0wcexhc_n+@&9c#n+wsoi_es&&q4bbb5l&-_q*m^mo7q'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -136,3 +144,21 @@ AUTH_USER_MODEL = 'authapp.User'
 # для перенаправление при авторизации - автоматически подставляется в @login_required
 LOGIN_URL = '/auth/login/<int:pk>/'
 LOGIN_REDIRECT_URL = 'index'
+
+# constant for email
+DOMAIN_NAME = 'http://127.0.0.1:8000'  # URL site
+
+# EMAIL_HOST = 'smtp.mailtrap.io'  # smtp server
+# EMAIL_HOST = 'smtp.mail.ru'  # smtp server
+# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+# EMAIL_PORT = env('EMAIL_PORT')
+# EMAIL_USE_SSL = False  # Использование шифрования (не использовать)
+# EMAIL_USE_TLS = False
+
+# # вариант python -m smtpd -n -c DebuggingServer localhost:25
+# EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None, None
+
+# вариант логирования сообщений почты в виде файлов вместо отправки
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = 'tmp/email-messages/'
