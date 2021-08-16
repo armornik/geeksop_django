@@ -92,7 +92,6 @@ class RegisterCreateView(SuccessMessageMixin, CreateView):
 #     message = f'{settings.DOMAIN_NAME}{verify_link}'
 #     return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
-
 def send_verify_mail(user):
     verify_link = reverse('auth:verify', args=[user.email, user.activation_key])
 
