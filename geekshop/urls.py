@@ -24,6 +24,7 @@ from mainapp.views import index, products
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('social_django.urls', namespace='social')),
     path('', index, name='index'),
     path('products/', products, name='products'),
     path('products/<int:category_id>/', products, name='product'),

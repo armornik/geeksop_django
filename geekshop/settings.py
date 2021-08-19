@@ -50,7 +50,17 @@ INSTALLED_APPS = [
     'authapp',
     'basketapp',
     'adminapp',
+
+    'social_django',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.vk.VKOAuth2'
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = env('SOCIAL_AUTH_VK_OAUTH2_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = env('SOCIAL_AUTH_VK_OAUTH2_SECRET')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
